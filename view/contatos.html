@@ -1,0 +1,77 @@
+<div class="jumbotron" ng-controller="listaTelefonicaCtrl">
+    <ui-accordions>
+        <ui-accordion title="Accordion 1">
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
+            Expedita exercitationem amet atque magni ad doloremque, 
+            architecto voluptates perferendis natus repellendus illum porro quaerat consequuntur, 
+            deserunt dolorem eius ipsa vitae voluptate.
+        </ui-accordion>
+        <ui-accordion title="Accordion 2">
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
+            Expedita exercitationem amet atque magni ad doloremque, 
+            architecto voluptates perferendis natus repellendus illum porro quaerat consequuntur, 
+            deserunt dolorem eius ipsa vitae voluptate.
+        </ui-accordion>
+    </ui-accordions>
+
+    <h4 ng-bind="app">{{app}}</h4>
+
+    <div ui-alert title="Ops, aconteceu um problema!">
+        Não foi possível carregar os dados
+    </div>
+
+    <input class="form-control" type="text" ng-model="criterioDeBusca" placeholder="O que você está buscando">
+    <table class="table table-striped" ng-show="contatos.length > 0">
+        <tr>
+            <th></th>
+            <th>Serial</th>
+            <th><a href="" ng-click="ordenarPor('nome')">Nome</a></th>
+            <th><a href="" ng-click="ordenarPor('nome')">Telefone</a></th>
+            <th>Operadora</th>
+            <th>data</th>
+        </tr>
+        <tr ng-class="{'selecionado negrito' : contato.selecionado}" ng-repeat="contato in contatos | filter: criterioDeBusca | orderBy : criterioDeOrdenacao:direcaoDaOrdenacao">
+            <td><input type="checkbox" ng-model="contato.selecionado"></td>
+            <td>{{contato.serial}}</td>
+            <td><a href="#/detalhesContato/{{contato.id}}">{{contato.nome | name | ellipsis:4}}</a></td>
+            <td>{{contato.telefone}}</td>
+            <td>{{contato.operadora.nome | lowercase}}</td>
+            <td>{{contato.data | date : 'dd/MM/yyyy HH:mm'}}</td>
+        </tr>
+    </table>
+    <hr/>
+    <!-- <a class="btn btn-primary" href="#/novoContato">Novo contato</a> -->
+    <form name="contatoForm">
+        <input class="form-control" type="text" name="nome" ng-model="contato.nome" ng-required="true"
+            ng-minlength="10" />
+        <input class="form-control" type="text" name="telefone" ng-model="contato.telefone" ng-required="true"
+            ng-pattern="/^\d{4,5}-\d{4}$/" />
+        <input class="form-control" type="text" name="data" ng-model="contato.data" ng-required="true" name="data"
+            ui-date maxlength="10" />
+        <select class="form-control" ng-model="contato.operadora"
+            ng-options="operadora.nome + ' ( ' + (operadora.preco | currency) + ' ) ' for operadora in operadoras | orderBy: 'nome'">
+            <option value="vazio">Selecione uma operadora</option>
+        </select>
+    </form>
+    <div ng-show="contatoForm.nome.$dirty" ng-messages="contatoForm.nome.$error">
+
+        <div ng-message="required" class="alert alert-danger">
+            Por favor, preencha o campo nome
+        </div>
+        <div ng-message="minlength" class="alert alert-danger">
+            O campo nome deve ter no mínimo 10 caracteres!
+        </div>
+    </div>
+    <div ng-show="contatoForm.telefone.$error.required && contatoForm.telefone.$dirty" class="alert alert-danger">
+        Por favor, preencha o campo telefone
+    </div>
+    <div ng-show="contatoForm.telefone.$error.pattern" class="alert alert-danger">
+        O campo telefone deve ter o formato DDDDD-DDDD.
+    </div>
+
+    <button class="btn btn-primary" ng-disabled="contatoForm.$invalid" ng-click="adicionarContato(contato)">Adicionar
+        Contato</button>
+    <button class="btn btn-danger btn-controller" ng-click="apagarContatos(contatos)"
+    ng-show="isContatoSelecionado(contatos)">Apagar</button>
+
+</div>
